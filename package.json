@@ -1,0 +1,55 @@
+{
+  "name": "@mrmartineau/npm-package-base",
+  "version": "0.0.0",
+  "description": "Starter template for modern TypeScript npm packages.",
+  "license": "ISC",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "author": {
+    "name": "Zander Martineau",
+    "email": "zander@zander.wtf",
+    "url": "https://zander.wtf"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mrmartineau/npm-package-base.git"
+  },
+  "homepage": "https://github.com/mrmartineau/npm-package-base",
+  "bugs": {
+    "url": "https://github.com/mrmartineau/npm-package-base/issues"
+  },
+  "main": "./dist/index.cjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "build": "tsdown src/index.ts --format cjs,esm --target es2020 --dts --sourcemap --clean",
+    "check": "biome check --write .",
+    "dev": "tsdown src/index.ts --format cjs,esm --target es2020 --dts --sourcemap --watch",
+    "release": "semantic-release",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.6",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.0",
+    "@types/bun": "^1.3.10",
+    "@types/node": "^25.4.0",
+    "semantic-release": "^25.0.3",
+    "tsdown": "^0.21.2",
+    "typescript": "^5.9.3"
+  }
+}
