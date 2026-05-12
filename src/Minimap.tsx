@@ -209,9 +209,10 @@ export function Minimap({
 			const target = document.getElementById(section.id);
 			if (!target) return;
 			const scrollContainer = resolveScrollTarget(scrollTarget);
+			if (scrollContainer === null) return;
 			const behavior: ScrollBehavior = smoothScroll ? "smooth" : "auto";
 			const targetRect = target.getBoundingClientRect();
-			if (!scrollContainer || scrollContainer === window) {
+			if (scrollContainer === window) {
 				const top = targetRect.top + window.scrollY - topInset;
 				window.scrollTo({ top, behavior });
 				return;
