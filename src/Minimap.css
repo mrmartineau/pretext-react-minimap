@@ -1,0 +1,179 @@
+/*
+ * Default styles for <Minimap />.
+ * Every visual value is exposed as a CSS variable on the root .prm-minimap
+ * element. Override on the element, a parent, or :root to restyle.
+ *
+ * Layout vars
+ *   --prm-width            outer width of the minimap column
+ *   --prm-padding-block    vertical padding around the bar stack
+ *   --prm-padding-inline   horizontal padding around bars
+ *   --prm-gap              vertical gap between bars
+ *   --prm-indent           horizontal indent per heading level
+ *   --prm-row-height       click target height per row
+ *
+ * Bar vars
+ *   --prm-bar-height       thickness of a bar
+ *   --prm-bar-radius       border-radius of a bar
+ *   --prm-bar-color        idle bar color
+ *   --prm-bar-active       active bar color
+ *   --prm-bar-hover        hover bar color
+ *
+ * Surface vars
+ *   --prm-bg               minimap background
+ *   --prm-border           left-border color (set width via --prm-border-width)
+ *   --prm-border-width
+ *   --prm-viewport-bg      translucent scroll-window indicator color
+ *
+ * Tooltip vars
+ *   --prm-tooltip-bg
+ *   --prm-tooltip-color
+ *   --prm-tooltip-border
+ *   --prm-tooltip-font     full CSS font shorthand for tooltip text
+ *   --prm-tooltip-padding
+ *   --prm-tooltip-radius
+ *   --prm-tooltip-gap      gap between tooltip and bars
+ *   --prm-tooltip-z
+ *
+ * Motion vars
+ *   --prm-transition       transition timing for color/scale changes
+ */
+
+.prm-minimap {
+	--prm-width: 36px;
+	--prm-padding-block: 8px;
+	--prm-padding-inline: 6px;
+	--prm-gap: 2px;
+	--prm-indent: 4px;
+	--prm-row-height: 10px;
+
+	--prm-bar-height: 2px;
+	--prm-bar-radius: 1px;
+	--prm-bar-color: rgba(120, 120, 120, 0.55);
+	--prm-bar-active: currentColor;
+	--prm-bar-hover: rgba(120, 120, 120, 0.95);
+
+	--prm-bg: transparent;
+	--prm-border: rgba(120, 120, 120, 0.2);
+	--prm-border-width: 1px;
+	--prm-viewport-bg: rgba(120, 120, 120, 0.12);
+
+	--prm-tooltip-bg: #111;
+	--prm-tooltip-color: #fff;
+	--prm-tooltip-border: rgba(255, 255, 255, 0.08);
+	--prm-tooltip-font: 11px / 1 ui-sans-serif, system-ui, sans-serif;
+	--prm-tooltip-padding: 3px 6px;
+	--prm-tooltip-radius: 3px;
+	--prm-tooltip-gap: 6px;
+	--prm-tooltip-z: 20;
+
+	--prm-transition: 0.15s ease;
+
+	position: relative;
+	width: var(--prm-width);
+	min-width: var(--prm-width);
+	background: var(--prm-bg);
+	border-left: var(--prm-border-width) solid var(--prm-border);
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	box-sizing: border-box;
+	user-select: none;
+}
+
+.prm-viewport {
+	position: absolute;
+	left: 0;
+	right: 0;
+	background: var(--prm-viewport-bg);
+	pointer-events: none;
+	transition:
+		top 0.1s ease-out,
+		height 0.1s ease-out;
+	z-index: 0;
+	border-radius: 2px;
+}
+
+.prm-items {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: var(--prm-gap);
+	padding: var(--prm-padding-block) var(--prm-padding-inline);
+}
+
+.prm-row {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	min-height: var(--prm-row-height);
+	padding: 0;
+	padding-inline-start: var(--prm-row-indent, 0);
+	border: 0;
+	background: transparent;
+	color: inherit;
+	cursor: pointer;
+	appearance: none;
+	font: inherit;
+}
+
+.prm-row:focus-visible {
+	outline: 2px solid var(--prm-bar-active);
+	outline-offset: 2px;
+}
+
+.prm-bar {
+	display: block;
+	height: var(--prm-bar-height);
+	min-width: 4px;
+	max-width: 100%;
+	background: var(--prm-bar-color);
+	border-radius: var(--prm-bar-radius);
+	transform-origin: left center;
+	transition:
+		background-color var(--prm-transition),
+		transform var(--prm-transition);
+}
+
+.prm-row:hover .prm-bar,
+.prm-row:focus-visible .prm-bar {
+	background: var(--prm-bar-hover);
+	transform: scaleY(1.4);
+}
+
+.prm-row.is-active .prm-bar {
+	background: var(--prm-bar-active);
+	transform: scaleY(1.6);
+}
+
+.prm-tooltip {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	white-space: nowrap;
+	background: var(--prm-tooltip-bg);
+	color: var(--prm-tooltip-color);
+	border: 1px solid var(--prm-tooltip-border);
+	padding: var(--prm-tooltip-padding);
+	border-radius: var(--prm-tooltip-radius);
+	font: var(--prm-tooltip-font);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.12s ease;
+	z-index: var(--prm-tooltip-z);
+}
+
+.prm-minimap[data-tooltip-side="left"] .prm-tooltip {
+	right: calc(100% + var(--prm-tooltip-gap));
+}
+
+.prm-minimap[data-tooltip-side="right"] .prm-tooltip {
+	left: calc(100% + var(--prm-tooltip-gap));
+}
+
+.prm-row:hover .prm-tooltip,
+.prm-row:focus-visible .prm-tooltip {
+	opacity: 1;
+}

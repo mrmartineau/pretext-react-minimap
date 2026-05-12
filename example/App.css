@@ -1,0 +1,142 @@
+:root {
+	--bg: #fafafa;
+	--surface: #ffffff;
+	--text: #1c1c1f;
+	--muted: #6b6b73;
+	--border: #e5e5ea;
+	--accent: #5b5bff;
+	--header-height: 64px;
+	color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg: #0e0e10;
+		--surface: #16161a;
+		--text: #f0f0f3;
+		--muted: #8c8c95;
+		--border: #2a2a31;
+		--accent: #8c8cff;
+	}
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+	background: var(--bg);
+	color: var(--text);
+	font:
+		16px / 1.6 ui-sans-serif,
+		system-ui,
+		-apple-system,
+		Segoe UI,
+		sans-serif;
+}
+
+.page {
+	max-width: 1100px;
+	margin: 0 auto;
+	padding: 24px;
+}
+
+.page-header {
+	padding: 24px 0 32px;
+	border-bottom: 1px solid var(--border);
+	margin-bottom: 24px;
+}
+
+.page-title {
+	margin: 0 0 8px;
+	font-size: 1.6rem;
+	letter-spacing: -0.02em;
+}
+
+.page-subtitle {
+	margin: 0;
+	color: var(--muted);
+}
+
+.page-subtitle code {
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	background: var(--surface);
+	padding: 1px 5px;
+	border-radius: 3px;
+	border: 1px solid var(--border);
+	font-size: 0.85em;
+}
+
+.layout {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: 24px;
+	align-items: start;
+}
+
+.article {
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: 10px;
+	padding: 24px 32px;
+}
+
+.article section + section {
+	margin-top: 32px;
+}
+
+.article h1,
+.article h2,
+.article h3 {
+	scroll-margin-top: var(--header-height);
+	letter-spacing: -0.01em;
+}
+
+.article h1 {
+	font-size: 1.5rem;
+	margin: 0 0 12px;
+}
+
+.article h2 {
+	font-size: 1.2rem;
+	margin: 0 0 10px;
+	color: var(--text);
+}
+
+.article h3 {
+	font-size: 1rem;
+	margin: 0 0 8px;
+	color: var(--muted);
+}
+
+.article p {
+	margin: 0 0 12px;
+	color: var(--text);
+}
+
+.minimap-rail {
+	position: sticky;
+	top: 16px;
+	align-self: start;
+	height: calc(100vh - 32px);
+	display: flex;
+}
+
+/* Theme the minimap with the example's tokens. */
+.minimap-rail .prm-minimap {
+	--prm-width: 44px;
+	--prm-bar-color: color-mix(in oklab, var(--muted) 60%, transparent);
+	--prm-bar-hover: var(--text);
+	--prm-bar-active: var(--accent);
+	--prm-viewport-bg: color-mix(in oklab, var(--accent) 14%, transparent);
+	--prm-tooltip-bg: var(--text);
+	--prm-tooltip-color: var(--surface);
+	--prm-tooltip-border: var(--border);
+	--prm-border: var(--border);
+	--prm-indent: 6px;
+	height: 100%;
+	color: var(--accent);
+}

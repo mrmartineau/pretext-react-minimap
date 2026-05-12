@@ -1,29 +1,34 @@
-/* https://www.totaltypescript.com/how-to-create-an-npm-package#32-set-up-a-tsconfigjson */
 {
 	"compilerOptions": {
-		/* Base Options: */
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "target": "es2022",
-    "allowJs": true,
-    "resolveJsonModule": true,
-    "moduleDetection": "force",
-    "isolatedModules": true,
-    "verbatimModuleSyntax": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"target": "es2022",
+		"allowJs": true,
+		"resolveJsonModule": true,
+		"moduleDetection": "force",
+		"isolatedModules": true,
+		"verbatimModuleSyntax": true,
 
-    /* Strictness */
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
+		"strict": true,
+		"noUncheckedIndexedAccess": true,
+		"noImplicitOverride": true,
 
-    /* If transpiling with TypeScript: */
-    "module": "NodeNext",
-    "outDir": "dist",
-    "rootDir": "src",
-    "sourceMap": true,
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"outDir": "dist",
+		"rootDir": ".",
+		"sourceMap": true,
+		"declaration": true,
 
-    /* AND if you're building for a library: */
-    "declaration": true,
+		"jsx": "react-jsx",
+		"lib": ["es2022", "dom", "dom.iterable"]
 	},
-	"include": ["src/**/*.ts", "src/**/*.d.ts"]
+	"include": [
+		"src/**/*.ts",
+		"src/**/*.tsx",
+		"src/**/*.d.ts",
+		"example/**/*.ts",
+		"example/**/*.tsx",
+		"vite.config.ts"
+	]
 }

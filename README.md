@@ -1,95 +1,136 @@
-# npm-package-base
+# @mrmartineau/pretext-react-minimap
 
-A starter template for building TypeScript npm packages with ESM + CJS dual output, Biome, Bun, and automated releases via semantic-release.
+A tiny React minimap component. Renders section headings as a vertical stack of horizontal bars whose **widths reflect each heading's measured text width**, computed without DOM reflow via [`@chenglou/pretext`](https://github.com/chenglou/pretext). Hover a bar to see the heading label.
 
-This repository is meant to be copied and customised for each new package you publish.
+It is *not* a VS Code-style minimap (every word rendered) — it is a structural outline.
 
-## What's included
+## Features
 
-- TypeScript source in `src/`
-- Bundling with `tsdown` (ESM + CJS output)
-- Generated `.d.ts` types
-- Linting and formatting with Biome
-- Testing with Bun
-- Automated releases via `semantic-release`
-- GitHub Actions CI with build, test, and release jobs
+- Bar widths driven by `@chenglou/pretext` text measurement (no `getBoundingClientRect` thrash).
+- Active section tracked via `IntersectionObserver` + a distance-to-top tie-break.
+- Viewport indicator showing the visible scroll window.
+- Auto-extract sections from any heading container with `useSections`.
+- Works with `window` scroll or a custom scroll container.
+- All visuals exposed as CSS variables — bring your own theme.
 
-## How to use this template
+## Install
 
-1. Create a new repository from this one, or clone/copy it into a new folder.
-2. Update `package.json`:
-   - change `name`
-   - change `description`
-   - update `repository`, `homepage`, and `bugs` fields
-3. Replace the starter implementation in `src/index.ts` with your package code.
-4. Add any runtime dependencies your package needs.
-5. Install dependencies and start developing.
-6. Add `NPM_TOKEN` as a repository secret in GitHub for automated publishing.
+```sh
+bun add @mrmartineau/pretext-react-minimap
+# or
+npm install @mrmartineau/pretext-react-minimap
+```
 
-## Install dependencies
+Peer dependencies: `react`, `react-dom` (>=18).
 
-```bash
+## Usage
+
+```tsx
+import { Minimap } from '@mrmartineau/pretext-react-minimap'
+import '@mrmartineau/pretext-react-minimap/styles.css'
+
+export function Docs() {
+  const sections = [
+    { id: 'intro', title: 'Introduction', level: 1 },
+    { id: 'install', title: 'Installation', level: 2 },
+    { id: 'usage', title: 'Usage', level: 2 },
+    { id: 'usage-react', title: 'React', level: 3 },
+    { id: 'api', title: 'API', level: 1 },
+  ]
+
+  return (
+    <div className="layout">
+      <article>{/* …headings with matching `id` attributes… */}</article>
+      <aside><Minimap sections={sections} /></aside>
+    </div>
+  )
+}
+```
+
+Each section's `id` must match an element id in your document — that is the scroll target.
+
+### Auto-extract sections from the DOM
+
+```tsx
+import { useRef } from 'react'
+import { Minimap, useSections } from '@mrmartineau/pretext-react-minimap'
+
+function Article() {
+  const ref = useRef<HTMLElement>(null)
+  const sections = useSections(ref) // watches via MutationObserver
+
+  return (
+    <>
+      <article ref={ref}>{/* h1…h6 with ids */}</article>
+      <Minimap sections={sections} />
+    </>
+  )
+}
+```
+
+`useSections(ref, { selector, map })` defaults to all `h1…h6` with ids. Pass `selector` to narrow the match, or `map` to derive custom titles/levels.
+
+### Custom scroll container
+
+```tsx
+const [scrollEl, setScrollEl] = useState<HTMLDivElement | null>(null)
+
+return (
+  <>
+    <div ref={setScrollEl} className="scroll-area">…</div>
+    <Minimap sections={sections} scrollTarget={scrollEl} topInset={64} />
+  </>
+)
+```
+
+Use a callback ref (or state) so a re-render fires once the element mounts —
+`useRef().current` stays `null` for the first render and `Minimap` would never
+see the container otherwise.
+
+Pass `topInset` if a sticky header occludes the top of the scroll area; clicks
+land below it.
+
+## Props
+
+| Prop | Type | Default | Description |
+| ---- | ---- | ------- | ----------- |
+| `sections` | `MinimapSection[]` | required | `{ id, title, level? }` for each entry. |
+| `scrollTarget` | `HTMLElement \| Window \| null` | `window` | Scroll source for the active-section tracker and viewport indicator. |
+| `getFont` | `(s) => string` | level-based defaults | Canvas-font shorthand used to measure bar widths. |
+| `topInset` | `number` | `0` | Pixels at the top of the scroll area to treat as occluded. |
+| `showViewport` | `boolean` | `true` | Render the translucent viewport indicator. |
+| `smoothScroll` | `boolean` | `true` | Smooth-scroll on click. |
+| `tooltipSide` | `'left' \| 'right'` | `'left'` | Tooltip placement relative to bars. |
+| `scale` | `number` | auto-fit | Width multiplier applied to measured bar widths. Defaults to a value that makes the widest heading just fill the bar area. |
+| `onSectionClick` | `(s, ev) => boolean \| void` | — | Click handler. Return `false` to suppress the default scroll. |
+| `className`, `style`, `aria-label` | — | — | Standard pass-throughs. |
+
+## Theming
+
+Import the CSS file once, then override the CSS variables on the `.prm-minimap` element (or any ancestor). All defaults live on the root — every value is a variable.
+
+```css
+.prm-minimap {
+  --prm-width: 44px;
+  --prm-bar-color: color-mix(in oklab, currentColor 40%, transparent);
+  --prm-bar-active: dodgerblue;
+  --prm-viewport-bg: rgba(0, 110, 255, 0.12);
+  --prm-tooltip-bg: #111;
+  --prm-tooltip-color: #fff;
+}
+```
+
+See [`src/Minimap.css`](src/Minimap.css) for the full variable list.
+
+## Demo
+
+```sh
 bun install
+bun run example
 ```
 
-## Development
-
-```bash
-# Build ESM, CJS, and type declarations
-bun run build
-
-# Rebuild on file changes
-bun run dev
-
-# Check & fix formatting + linting
-bun run check
-
-# Run tests
-bun test
-```
-
-## Releasing
-
-Releases are fully automated via `semantic-release` on every push to `main`. Version bumps follow [conventional commits](https://www.conventionalcommits.org/):
-
-- `fix:` → patch
-- `feat:` → minor
-- `feat!:` or `BREAKING CHANGE:` → major
-
-The CI release job requires a `NPM_TOKEN` repository secret. `GITHUB_TOKEN` is provided automatically by GitHub Actions.
-
-## Project structure
-
-```text
-.
-├── .github/
-│   └── workflows/
-│       └── ci.yml
-├── src/
-│   ├── index.ts
-│   └── index.test.ts
-├── biome.json
-├── package.json
-├── release.config.mjs
-└── tsconfig.json
-```
-
-## Agent Skill
-
-This repo includes an agent skill (`SKILL.md`) that teaches AI coding agents how to scaffold new npm packages using this template's conventions. Install it with [`npx skills`](https://github.com/vercel-labs/skills):
-
-```bash
-# Interactive — choose your agent(s) and scope
-npx skills add mrmartineau/npm-package-base
-
-# Install globally for Claude Code
-npx skills add mrmartineau/npm-package-base -g -a claude-code
-```
-
-Once installed, your agent will automatically use this skill when asked to create or scaffold a new npm package.
+Then open <http://localhost:5173>.
 
 ## License
 
 [ISC](https://choosealicense.com/licenses/isc/) © [Zander Martineau](https://zander.wtf)
-
-> Made by Zander • [zander.wtf](https://zander.wtf) • [GitHub](https://github.com/mrmartineau/)
