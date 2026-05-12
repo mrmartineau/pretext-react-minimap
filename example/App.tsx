@@ -1,11 +1,23 @@
 import { useMemo, useRef } from "react";
 import { Minimap, useSections } from "../src/index.js";
 
-interface Chapter {
+interface Paragraph {
+	key: string;
+	text: string;
+}
+
+interface RawChapter {
 	id: string;
 	title: string;
 	level: number;
 	body: string[];
+}
+
+interface Chapter {
+	id: string;
+	title: string;
+	level: number;
+	body: Paragraph[];
 }
 
 const LOREM_SHORT =
@@ -13,7 +25,7 @@ const LOREM_SHORT =
 const LOREM_LONG =
 	"Pretext sidesteps DOM measurement by implementing its own multi-line text layout algorithm. It uses canvas for ground-truth segment widths, then does pure arithmetic for the wrap pass. Because measurement is decoupled from the document, you can ask shape questions about text — natural width, line count, wrapped height — without forcing a layout reflow on the browser.";
 
-const CHAPTERS: Chapter[] = [
+const RAW_CHAPTERS: RawChapter[] = [
 	{
 		id: "intro",
 		title: "Introduction",
@@ -118,6 +130,13 @@ const CHAPTERS: Chapter[] = [
 	},
 ];
 
+const CHAPTERS: Chapter[] = RAW_CHAPTERS.map((c) => ({
+	id: c.id,
+	title: c.title,
+	level: c.level,
+	body: c.body.map((text, i) => ({ key: `${c.id}-p${i}`, text })),
+}));
+
 function HeadingForLevel({
 	level,
 	id,
@@ -172,7 +191,7 @@ export function App() {
 								{chapter.title}
 							</HeadingForLevel>
 							{chapter.body.map((p) => (
-								<p key={`${chapter.id}-${p.slice(0, 24)}`}>{p}</p>
+								<p key={p.key}>{p.text}</p>
 							))}
 						</section>
 					))}

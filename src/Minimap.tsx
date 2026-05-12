@@ -208,12 +208,21 @@ export function Minimap({
 			if (proceed === false) return;
 			const target = document.getElementById(section.id);
 			if (!target) return;
-			target.scrollIntoView({
-				behavior: smoothScroll ? "smooth" : "auto",
-				block: "start",
-			});
+			const scrollContainer = resolveScrollTarget(scrollTarget);
+			const behavior: ScrollBehavior = smoothScroll ? "smooth" : "auto";
+			const targetRect = target.getBoundingClientRect();
+			if (!scrollContainer || scrollContainer === window) {
+				const top = targetRect.top + window.scrollY - topInset;
+				window.scrollTo({ top, behavior });
+				return;
+			}
+			const container = scrollContainer as HTMLElement;
+			const containerRect = container.getBoundingClientRect();
+			const top =
+				targetRect.top - containerRect.top + container.scrollTop - topInset;
+			container.scrollTo({ top, behavior });
 		},
-		[onSectionClick, smoothScroll],
+		[onSectionClick, smoothScroll, scrollTarget, topInset],
 	);
 
 	return (

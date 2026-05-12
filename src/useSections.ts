@@ -60,6 +60,8 @@ export function useSections(
 			childList: true,
 			subtree: true,
 			characterData: true,
+			attributes: true,
+			attributeFilter: ["id"],
 		});
 		return () => observer.disconnect();
 	}, [containerRef, selector, map]);

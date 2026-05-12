@@ -73,12 +73,22 @@ function Article() {
 ### Custom scroll container
 
 ```tsx
-const scrollRef = useRef<HTMLDivElement>(null)
-<div ref={scrollRef} className="scroll-area">…</div>
-<Minimap sections={sections} scrollTarget={scrollRef.current} topInset={64} />
+const [scrollEl, setScrollEl] = useState<HTMLDivElement | null>(null)
+
+return (
+  <>
+    <div ref={setScrollEl} className="scroll-area">…</div>
+    <Minimap sections={sections} scrollTarget={scrollEl} topInset={64} />
+  </>
+)
 ```
 
-Pass `topInset` if a sticky header occludes the top of the scroll area.
+Use a callback ref (or state) so a re-render fires once the element mounts —
+`useRef().current` stays `null` for the first render and `Minimap` would never
+see the container otherwise.
+
+Pass `topInset` if a sticky header occludes the top of the scroll area; clicks
+land below it.
 
 ## Props
 
@@ -91,6 +101,7 @@ Pass `topInset` if a sticky header occludes the top of the scroll area.
 | `showViewport` | `boolean` | `true` | Render the translucent viewport indicator. |
 | `smoothScroll` | `boolean` | `true` | Smooth-scroll on click. |
 | `tooltipSide` | `'left' \| 'right'` | `'left'` | Tooltip placement relative to bars. |
+| `scale` | `number` | auto-fit | Width multiplier applied to measured bar widths. Defaults to a value that makes the widest heading just fill the bar area. |
 | `onSectionClick` | `(s, ev) => boolean \| void` | — | Click handler. Return `false` to suppress the default scroll. |
 | `className`, `style`, `aria-label` | — | — | Standard pass-throughs. |
 
