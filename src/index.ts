@@ -1,10 +1,6 @@
-export interface HelloOptions {
-	punctuation?: string;
-}
-
-export function hello(
-	name = "world",
-	{ punctuation = "!" }: HelloOptions = {},
-): string {
-	return `Hello, ${name}${punctuation}`;
-}
+export type { MinimapProps, MinimapSection } from "./Minimap.js";
+export { Minimap } from "./Minimap.js";
+export { clearMeasurementCache, measureWidth } from "./measure.js";
+export type { ScrollTarget } from "./scrollTracking.js";
+export type { UseSectionsOptions } from "./useSections.js";
+export { useSections } from "./useSections.js";
